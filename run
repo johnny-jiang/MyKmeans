@@ -1,0 +1,23 @@
+echo remove file:
+rm -rf *.java *.class *.jar MyKmeans *.txt 
+echo copy file:
+cp /mnt/hgfs/123/MyKmeans/*.java ./
+cp /mnt/hgfs/123/MyKmeans/wine.txt  ./wine.txt
+echo comp:
+hadoop com.sun.tools.javac.Main MapReduce.java Utils.java MinDistance.java -d .
+echo jar:
+jar cfe MyKmeans.jar MyKmeans.MapReduce ./MyKmeans/*
+echo compute centers:
+java MyKmeans.MinDistance
+echo remove hdfs dir:
+hdfs dfs -rm -r /out
+echo remove centers.txt 
+hdfs dfs -rm /input/centers.txt
+echo remove wine.txt
+hdfs dfs -rm /input/wine.txt
+echo upload centers.txt
+hdfs dfs -put centers.txt /input
+echo upload wine.txt
+hdfs dfs -put wine.txt /input
+echo run:
+hadoop jar MyKmeans.jar MyKmeans.MapReduce
